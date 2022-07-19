@@ -1,16 +1,17 @@
-from deep_translator import GoogleTranslator
+import translators as ts 
 import pandas as pd 
 import numpy as np
+from tqdm import tqdm
 
-df = pd.read_excel (r"input.xlsx")# import excel into pandas  
-df["en"] = "null"
-df["fr"] = "null"
-print(df) 
-for ind in df.index : 
-    english = GoogleTranslator(source='auto', target='en').translate(df['a'][ind])
-    french = GoogleTranslator(source='auto', target='fr').translate(df['a'][ind])
-    df["en"][ind] = english 
-    df["fr"][ind] = french 
-    per = round((ind/len(df.index))*100,2) 
-    print ("{}/{}({}%) = {}/{}".format (ind, len(df.index),per ,english, french)) 
-df.to_excel(r"translated_1.xlsx")
+tqdm.pandas() # used to create completion progress bar 
+
+df = pd.read_excel (r"translated_1.xlsx")# import excel into pandas  
+#df['en_deepL'] = df['a'].progress_apply(lambda x: ts.deepl(x, from_language= 'zh', to_language='en'))
+df['en_cayun'] = df['a'].progress_apply(lambda x: ts.caiyun(x, from_language='zh', to_language='fr', professional_field = 'law'))
+'''
+print("google translate mandarin to english...")
+df['en_google'] = df['a'].progress_apply(lambda x: ts.google(x, from_language='zh', to_language='en'))
+print("google translate mandarin to french...")
+df['fr_googgle'] = df['a'].progress_appy(lambda x: ts.google(x,from_language='zh', to_language='fr'))
+'''
+df.to_excel(r"translated.xlsx") # save output to excel 
